@@ -9,12 +9,16 @@ import * as articleProps from 'src/constants/articleProps';
 import { Simulate } from 'react-dom/test-utils';
 import select = Simulate.select;
 import { Text } from 'components/text';
-import { defaultArticleState, OptionType } from 'src/constants/articleProps';
+import {backgroundColors, contentWidthArr, defaultArticleState, OptionType} from 'src/constants/articleProps';
+import { RadioGroup } from 'components/radio-group';
+import {Separator} from "components/separator";
 
 export const ArticleParamsForm = () => {
 	const [formState, setFormState] = useState(defaultArticleState);
 	const [isOpen, setIsOpen] = useState(false);
-
+	const handleFontSizeChange = (option: OptionType) => {
+		setFormState({ ...formState, fontSizeOption: option });
+	};
 	const togglePanel = () => {
 		setIsOpen(!isOpen);
 	};
@@ -36,7 +40,39 @@ export const ArticleParamsForm = () => {
 							setFormState({ ...formState, fontFamilyOption: value })
 						}
 						options={articleProps.fontFamilyOptions}
-						title='Font Family'
+						title='Шрифт'
+					/>
+					<RadioGroup
+						name='fontSize'
+						title='Размер Шрифта'
+						options={articleProps.fontSizeOptions}
+						selected={formState.fontSizeOption}
+						onChange={handleFontSizeChange}
+					/>
+					<Select
+						selected={formState.fontColor}
+						onChange={(value: OptionType) =>
+							setFormState({ ...formState, fontColor: value })
+						}
+						options={articleProps.fontColors}
+						title='Цвет шрифта'
+					/>
+					<Separator />
+					<Select
+						selected={formState.backgroundColor}
+						onChange={(value: OptionType) =>
+							setFormState({ ...formState, backgroundColor: value })
+						}
+						options={articleProps.backgroundColors}
+						title='Цвет фона'
+					/>
+					<Select
+						selected={formState.contentWidth}
+						onChange={(value: OptionType) =>
+							setFormState({ ...formState, contentWidth: value })
+						}
+						options={articleProps.contentWidthArr}
+						title='Ширина контента'
 					/>
 					<div className={styles.bottomContainer}>
 						<Button title='Сбросить' type='reset' />
