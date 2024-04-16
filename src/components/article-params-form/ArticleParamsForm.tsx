@@ -3,11 +3,22 @@ import { Button } from 'components/button';
 
 import styles from './ArticleParamsForm.module.scss';
 
+import React, { useState } from 'react';
+
 export const ArticleParamsForm = () => {
+	const [isOpen, setIsOpen] = useState(false);
+
+	const togglePanel = () => {
+		setIsOpen(!isOpen);
+	};
+
 	return (
 		<>
-			<ArrowButton />
-			<aside className={styles.container}>
+			<ArrowButton onClick={togglePanel} isOpen={isOpen} />
+			<aside
+				className={`${styles.container} ${
+					isOpen ? styles.container_open : ''
+				}`}>
 				<form className={styles.form}>
 					<div className={styles.bottomContainer}>
 						<Button title='Сбросить' type='reset' />
