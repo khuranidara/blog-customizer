@@ -9,19 +9,33 @@ import * as articleProps from 'src/constants/articleProps';
 import { Simulate } from 'react-dom/test-utils';
 import select = Simulate.select;
 import { Text } from 'components/text';
-import {backgroundColors, contentWidthArr, defaultArticleState, OptionType} from 'src/constants/articleProps';
+import {
+	ArticleStateType,
+	backgroundColors,
+	contentWidthArr,
+	defaultArticleState,
+	OptionType,
+} from 'src/constants/articleProps';
 import { RadioGroup } from 'components/radio-group';
-import {Separator} from "components/separator";
+import { Separator } from 'components/separator';
 
-export const ArticleParamsForm = () => {
-	const [formState, setFormState] = useState(defaultArticleState);
+type ArticleParamsFormProps = {
+	articleState: ArticleStateType;
+	onStateChange: (newState: Partial<ArticleStateType>) => void;
+};
+
+export const ArticleParamsForm = ({
+	articleState,
+	onStateChange,
+}: ArticleParamsFormProps) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const handleFontSizeChange = (option: OptionType) => {
-		setFormState({ ...formState, fontSizeOption: option });
-	};
 	const togglePanel = () => {
 		setIsOpen(!isOpen);
 	};
+	const handleOptionChange =
+		(optionKey: keyof ArticleStateType) => (option: OptionType) => {
+			onStateChange({ [optionKey]: option });
+		};
 
 	return (
 		<>
@@ -35,10 +49,8 @@ export const ArticleParamsForm = () => {
 						Задайте параметры
 					</Text>
 					<Select
-						selected={formState.fontFamilyOption}
-						onChange={(value: OptionType) =>
-							setFormState({ ...formState, fontFamilyOption: value })
-						}
+						selected={articleState.fontFamilyOption}
+						onChange={handleOptionChange('fontFamilyOption')}
 						options={articleProps.fontFamilyOptions}
 						title='Шрифт'
 					/>
@@ -46,31 +58,25 @@ export const ArticleParamsForm = () => {
 						name='fontSize'
 						title='Размер Шрифта'
 						options={articleProps.fontSizeOptions}
-						selected={formState.fontSizeOption}
-						onChange={handleFontSizeChange}
+						selected={articleState.fontSizeOption}
+						onChange={handleOptionChange('fontSizeOption')}
 					/>
 					<Select
-						selected={formState.fontColor}
-						onChange={(value: OptionType) =>
-							setFormState({ ...formState, fontColor: value })
-						}
+						selected={articleState.fontColor}
+						onChange={handleOptionChange('fontColor')}
 						options={articleProps.fontColors}
 						title='Цвет шрифта'
 					/>
 					<Separator />
 					<Select
-						selected={formState.backgroundColor}
-						onChange={(value: OptionType) =>
-							setFormState({ ...formState, backgroundColor: value })
-						}
+						selected={articleState.backgroundColor}
+						onChange={handleOptionChange('backgroundColor')}
 						options={articleProps.backgroundColors}
 						title='Цвет фона'
 					/>
 					<Select
-						selected={formState.contentWidth}
-						onChange={(value: OptionType) =>
-							setFormState({ ...formState, contentWidth: value })
-						}
+						selected={articleState.contentWidth}
+						onChange={handleOptionChange('contentWidth')}
 						options={articleProps.contentWidthArr}
 						title='Ширина контента'
 					/>
