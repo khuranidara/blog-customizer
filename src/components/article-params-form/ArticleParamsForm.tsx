@@ -38,7 +38,10 @@ export const ArticleParamsForm = ({
 		(option: articleProps.OptionType) => {
 			setTempState((prev) => ({ ...prev, [optionKey]: option }));
 		};
-	const handleReset = () => setTempState(articleState);
+	const handleReset = () => {
+		setTempState(articleProps.defaultArticleState);
+		onStateChange(articleProps.defaultArticleState);
+	};
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
 		onStateChange(tempState);
