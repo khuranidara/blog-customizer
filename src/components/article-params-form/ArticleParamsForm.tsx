@@ -20,23 +20,29 @@ import { RadioGroup } from 'components/radio-group';
 import { Separator } from 'components/separator';
 
 type ArticleParamsFormProps = {
-	articleState: ArticleStateType;
-	onStateChange: (newState: Partial<ArticleStateType>) => void;
+	articleState: articleProps.ArticleStateType;
+	onStateChange: (newState: Partial<articleProps.ArticleStateType>) => void;
 };
 
 export const ArticleParamsForm = ({
 	articleState,
 	onStateChange,
 }: ArticleParamsFormProps) => {
+	const [tempState, setTempState] = useState(articleState);
 	const [isOpen, setIsOpen] = useState(false);
 	const togglePanel = () => {
 		setIsOpen(!isOpen);
 	};
 	const handleOptionChange =
-		(optionKey: keyof ArticleStateType) => (option: OptionType) => {
-			onStateChange({ [optionKey]: option });
+		(optionKey: keyof articleProps.ArticleStateType) =>
+		(option: articleProps.OptionType) => {
+			setTempState((prev) => ({ ...prev, [optionKey]: option }));
 		};
-
+	const handleReset = () => setTempState(articleState);
+	const handleSubmit = (event: React.FormEvent) => {
+		event.preventDefault();
+		onStateChange(tempState);
+	};
 	return (
 		<>
 			<ArrowButton onClick={togglePanel} isOpen={isOpen} />
@@ -44,12 +50,15 @@ export const ArticleParamsForm = ({
 				className={`${styles.container} ${
 					isOpen ? styles.container_open : ''
 				}`}>
-				<form className={styles.form}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}>
 					<Text as='h2' size={31} weight={800} uppercase family='open-sans'>
 						Задайте параметры
 					</Text>
 					<Select
-						selected={articleState.fontFamilyOption}
+						selected={tempState.fontFamilyOption}
 						onChange={handleOptionChange('fontFamilyOption')}
 						options={articleProps.fontFamilyOptions}
 						title='Шрифт'
@@ -58,24 +67,24 @@ export const ArticleParamsForm = ({
 						name='fontSize'
 						title='Размер Шрифта'
 						options={articleProps.fontSizeOptions}
-						selected={articleState.fontSizeOption}
+						selected={tempState.fontSizeOption}
 						onChange={handleOptionChange('fontSizeOption')}
 					/>
 					<Select
-						selected={articleState.fontColor}
+						selected={tempState.fontColor}
 						onChange={handleOptionChange('fontColor')}
 						options={articleProps.fontColors}
 						title='Цвет шрифта'
 					/>
 					<Separator />
 					<Select
-						selected={articleState.backgroundColor}
+						selected={tempState.backgroundColor}
 						onChange={handleOptionChange('backgroundColor')}
 						options={articleProps.backgroundColors}
 						title='Цвет фона'
 					/>
 					<Select
-						selected={articleState.contentWidth}
+						selected={tempState.contentWidth}
 						onChange={handleOptionChange('contentWidth')}
 						options={articleProps.contentWidthArr}
 						title='Ширина контента'
