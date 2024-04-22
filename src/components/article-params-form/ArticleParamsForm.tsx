@@ -3,7 +3,7 @@ import { Button } from 'components/button';
 
 import styles from './ArticleParamsForm.module.scss';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Select } from 'components/select';
 import * as articleProps from 'src/constants/articleProps';
 import { Simulate } from 'react-dom/test-utils';
@@ -30,6 +30,7 @@ export const ArticleParamsForm = ({
 }: ArticleParamsFormProps) => {
 	const [tempState, setTempState] = useState(articleState);
 	const [isOpen, setIsOpen] = useState(false);
+	const formRef = useRef<HTMLFormElement>(null);
 	const togglePanel = () => {
 		setIsOpen(!isOpen);
 	};
@@ -46,6 +47,24 @@ export const ArticleParamsForm = ({
 		event.preventDefault();
 		onStateChange(tempState);
 	};
+
+	const handleClickOutside = (event: MouseEvent) => {
+		if (formRef.current && !formRef.current.contains(event.target as Node)) {
+			setIsOpen(false);
+		}
+	};
+
+	useEffect(() => {
+		if (isOpen) {
+			document.addEventListener('mousedown', handleClickOutside);
+		} else {
+			document.removeEventListener('mousedown', handleClickOutside);
+		}
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [isOpen]);
+
 	return (
 		<>
 			<ArrowButton onClick={togglePanel} isOpen={isOpen} />
@@ -54,6 +73,7 @@ export const ArticleParamsForm = ({
 					isOpen ? styles.container_open : ''
 				}`}>
 				<form
+					ref={formRef}
 					className={styles.form}
 					onSubmit={handleSubmit}
 					onReset={handleReset}>
